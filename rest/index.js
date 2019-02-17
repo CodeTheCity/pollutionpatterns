@@ -11,8 +11,10 @@ function respond(req, res, next) {
 function sensorData(req, res, next) {
   console.log(req.params)
   const dataAPI = new RequestHander()
-  dataAPI.sensorDataGetter(res, req.params)
-  next();
+  dataAPI.sensorDataGetter(res, next, req.params)
+  // let jsonback = {"sensor":1}
+  // res.send(jsonback);
+  // next();
 }
 
 function deviceData(req, res, next) {

@@ -46,13 +46,13 @@ RequestHander.prototype.mysqlConnect = function () {
 * @method sensorDataGetter
 *
 */
-RequestHander.prototype.sensorDataGetter = function (res, computeAsked) {
+RequestHander.prototype.sensorDataGetter = function (res, next, computeAsked) {
   // console.log()
   let dataSensor
   // what type of computation asked for
   if (computeAsked.sensor_id === 'p1') {
     console.log('p1 data query')
-    this.formSensorQuery(res, computeAsked.comp_id)
+    this.formSensorQuery(res, next, computeAsked.comp_id)
   } else if (computeAsked.sensor_id === 'p2') {
     console.log('p2 data query')
   }
@@ -63,20 +63,16 @@ RequestHander.prototype.sensorDataGetter = function (res, computeAsked) {
 * @method formSensorQuery
 *
 */
-RequestHander.prototype.formSensorQuery = function (res, computeAsked) {
+RequestHander.prototype.formSensorQuery = function (res, next, computeAsked) {
   console.log('start query')
   this.connection.connect();
-  this.connection.query('SELECT * FROM sensor', function (error, results, fields) {
+  this.connection.query('SELECT * FROM monthlyaverage', function (error, results, fields) {
     if (error) throw error;
     console.log(error)
-    console.log(results)
-    // console.log(fields)
-    // console.log('The solution is: ', results[0].solution);
-    let JSONback = JSON.stringify(results)
-    res.send(JSONback);
-    return true
+    res.send(results);
   });
   this.connection.end();
+  next();
 }
 
 /**
@@ -91,9 +87,6 @@ RequestHander.prototype.formSensorQuery2 = function (computeAsked) {
 
     if (error) throw error;
     console.log(error)
-    console.log(results)
-    console.log(fields)
-    console.log('The solution is: ', results[0].solution);
   });
   this.connection.end();
 }
