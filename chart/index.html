@@ -5,6 +5,7 @@
 	<title>Average Pollution Per Sensor</title>
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
     <script src="chart.js"></script>
+    <script src="axios.js"></script>
 	<style>
     canvas {
         -moz-user-select: none;
@@ -26,6 +27,18 @@
 	<button id="addData">Add Data</button>
 	<button id="removeData">Remove Data</button>
 	<script>
+    var dataIN = axios.get('http://localhost:8082/hello/').then(function (response) {
+      console.log('axios return')
+      console.log(dataIN)
+    })
+    .catch(function (error) {
+    console.log('axios error')
+    console.log(error)
+    });
+
+    let jsondata = axios.get('http://localhost:8082/hello/')
+    console.log(jsondata)
+
 		var timeFormat = 'MM/DD/YYYY HH:mm';
 
 		function newDate(days) {
@@ -72,16 +85,16 @@
 					fill: false,
 					data: [{
 						x: newDateString(0),
-						y: 0
+						y: 2
 					}, {
 						x: newDateString(5),
-						y: 0
+						y: 4
 					}, {
 						x: newDateString(7),
-						y: 0
+						y: 6
 					}, {
 						x: newDateString(15),
-						y: 0
+						y: 8
 					}],
 				}]
 			},

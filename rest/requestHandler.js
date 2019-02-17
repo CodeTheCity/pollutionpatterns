@@ -74,6 +74,7 @@ RequestHander.prototype.formSensorQuery = function (res, computeAsked) {
     // console.log('The solution is: ', results[0].solution);
     let JSONback = JSON.stringify(results)
     res.send(JSONback);
+    return true
   });
   this.connection.end();
 }

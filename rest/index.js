@@ -29,6 +29,15 @@ var https_options = {
 };
 
 var server = restify.createServer();
+
+server.use(
+  function crossOrigin(req,res,next){
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    return next();
+  }
+);
+
 server.get('/hello/:name', respond);
 server.head('/hello/:name', respond);
 
