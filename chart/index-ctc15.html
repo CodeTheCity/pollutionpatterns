@@ -1,0 +1,212 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>Average Pollution Per Sensor</title>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+    <script src="chart.js"></script>
+    <script src="axios.js"></script>
+	<style>
+    canvas {
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+    }
+	</style>
+</head>
+
+<body>
+	<div style="width:75%;">
+		<canvas id="canvas"></canvas>
+	</div>
+	<br>
+	<br>
+	<button id="dailyData">Daily</button>
+	<button id="weeklyData">Weekly</button>
+	<button id="monthlyData">Monthly</button>
+	<button id="yearData">Yearly</button>
+	<button id="removeData">Remove Data</button>
+	<script>
+    var config = {}
+    var dataTime = [1]
+    var dataSets = [22]
+    async function getData () {
+      var dataIN = axios.get('http://165.227.244.213:8881/luftdatenGet/22FQ8dJEApww33p31935/9d93d9d8cv7js9sj4765s120sllkudp389cm/ ').then(function (response) {
+        console.log('axios return')
+        console.log(response)
+        // form appropriate data structures for charting
+        buildNewChart(response.data)
+        return true
+      })
+      .catch(function (error) {
+      console.log('axios error')
+      console.log(error)
+      });
+    }
+
+    function buildNewChart (dataI) {
+
+      function chartLabelsStructure (dataIN) {
+        let time = []
+        for(let item of dataIN) {
+          // console.log(item)
+					let tsdate = new Date(parseInt(item._id.substring(0, 8), 16) * 1000)
+          time.push(tsdate)
+        }
+        // console.log(time)
+        return time
+      }
+
+      function chartDataSetStructure (dataIN, senid) {
+				console.log('senid')
+				console.log(senid)
+        let data = []
+        for(let item of dataIN) {
+          data.push(item.sensordatavalues[senid].value)
+        }
+        // console.log(data)
+        return data
+      }
+
+      dataTime = chartLabelsStructure(dataI)
+      console.log(dataTime)
+      dataSets = chartDataSetStructure(dataI, 0)
+      dataSets2 = chartDataSetStructure(dataI, 1)
+      dataSets3 = chartDataSetStructure(dataI, 2)
+      dataSets4 = chartDataSetStructure(dataI, 3)
+      console.log(dataSets)
+			console.log(dataSets2)
+			console.log(dataSets3)
+			console.log(dataSets4)
+      config = {
+        type: 'line',
+        data: {
+          labels: dataTime,
+          datasets: [{
+            label: "P1 sensor",
+            backgroundColor: '#008000',
+            borderColor: 'grey',
+            fill: false,
+            data: dataSets,
+          },{
+            label: "P2 sensor",
+            backgroundColor: '#d620d0',
+            borderColor: 'purple',
+            fill: false,
+            data: dataSets2,
+          },{
+						label: "Temp. sensor",
+						backgroundColor: '#d6dd0d',
+						borderColor: 'blue',
+						fill: false,
+						data: dataSets3,
+					}, {
+						label: "Humid. sensor",
+						backgroundColor: '#a0041c',
+						borderColor: 'red',
+						fill: false,
+						data: dataSets4,
+					}]
+        },
+        options: {
+                  title:{
+                      text: "PollutionPattern Data Science"
+                  },
+          scales: {
+            xAxes: [{
+              // type: "time",
+              time: {
+                format: timeFormat,
+                // round: 'day'
+                tooltipFormat: 'll HH:mm'
+              },
+              scaleLabel: {
+                display: true,
+                labelString: 'Date'
+              }
+            }, ],
+            yAxes: [{
+              scaleLabel: {
+                display: true,
+                labelString: 'value'
+              },
+              ticks: {
+                        beginAtZero: true,
+                        steps: 10,
+                        stepValue: 5,
+                        max: 100
+                      }
+            }]
+          }
+        }
+      };
+      var ctx = document.getElementById("canvas").getContext("2d");
+      window.myLine = new Chart(ctx, config);
+      // window.myLine.update();
+
+}
+		var timeFormat = 'MM/DD/YYYY HH:mm';
+
+		function newDate(days) {
+			return moment().add(days, 'd').toDate();
+		}
+
+		function newDateString(days) {
+			return moment().add(days, 'd').format(timeFormat);
+		}
+
+		function newTimestamp(days) {
+			return moment().add(days, 'd').unix();
+		}
+
+    config = {
+      type: 'line',
+      data: {
+        labels: dataTime,
+        datasets: [{
+          label: "Average Monthly P1 sensor",
+          backgroundColor: '#008000',
+          borderColor: 'green',
+          fill: false,
+          data: dataSets,
+        }]
+      },
+      options: {
+                title:{
+                    text: "PollutionPattern Data Science"
+                },
+        scales: {
+          xAxes: [{
+            // type: "time",
+            time: {
+              format: timeFormat,
+              // round: 'day'
+              tooltipFormat: 'll HH:mm'
+            },
+            scaleLabel: {
+              display: true,
+              labelString: 'Date'
+            }
+          }, ],
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'value'
+            }
+          }]
+        }
+      }
+    };
+
+    var color = 'red';
+    window.onload = function() {
+    // console.log(config)
+      var ctx = document.getElementById("canvas").getContext("2d");
+      window.myLine = new Chart(ctx, config);
+      getData()
+    };
+
+	</script>
+</body>
+
+</html>
