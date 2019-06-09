@@ -34,8 +34,8 @@ RequestHander.prototype.mysqlConnect = function () {
   // console.log()
   this.connection = mysql.createConnection({
     host     : 'localhost',
-    user     : '',
-    password : '',
+    user     : 'root',
+    password : 'Ivy22adder88!',
     database : 'pollutionpatterns'
   });
 
